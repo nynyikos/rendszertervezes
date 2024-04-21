@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class users(models.Model):
+class user(models.Model):
     username = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
@@ -15,8 +15,8 @@ class category(models.Model):
     def __str__(self):
         return self.name
     
-class cars(models.Model):
-    category_id = models.ForeignKey(category, on_delete=models.CASCADE)
+class car(models.Model):
+    category = models.ForeignKey(category, on_delete=models.CASCADE)
     brand = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
     daily_price = models.IntegerField()
@@ -24,20 +24,20 @@ class cars(models.Model):
     def __str__(self):
         return f"{self.brand} - {self.model}"
 
-class rentals(models.Model):
-    user_id = models.ForeignKey(users, on_delete=models.CASCADE)
-    car_id = models.ForeignKey(cars, on_delete=models.CASCADE)
+class rental(models.Model):
+    user = models.ForeignKey(user   , on_delete=models.CASCADE)
+    car = models.ForeignKey(car, on_delete=models.CASCADE)
     from_date = models.DateField()
     to_date = models.DateField()
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Auto kikolcsonozve {self.users.username} altal a kovetkezo gepjarmu: - {self.cars.brand} {self.cars.model} ettol:  {self.from_date} eddig:  {self.to_date}"
+        return f"Auto kikolcsonozve {self.user.username} altal a kovetkezo gepjarmu: - {self.car.brand} {self.car.model} ettol:  {self.from_date} eddig:  {self.to_date}"
     
-class sales(models.Model):
-    car_id = models.ForeignKey(cars, on_delete=models.CASCADE)
+class sale(models.Model):
+    car = models.ForeignKey(car, on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
     percent = models.IntegerField()
 
     def __str__(self):
-        return f"{self.percent}% akcio a {self.cars.brand} {self.cars.model} gepjarmuvon"
+        return f"{self.percent}% akcio a {self.car.brand} {self.car.model} gepjarmuvon"
