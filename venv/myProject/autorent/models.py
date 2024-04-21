@@ -16,7 +16,7 @@ class category(models.Model):
         return self.name
     
 class cars(models.Model):
-    category = models.ForeignKey(category, on_delete=models.CASCADE)
+    category_id = models.ForeignKey(category, on_delete=models.CASCADE)
     brand = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
     daily_price = models.IntegerField()
@@ -25,8 +25,8 @@ class cars(models.Model):
         return f"{self.brand} - {self.model}"
 
 class rentals(models.Model):
-    user = models.ForeignKey(users, on_delete=models.CASCADE)
-    car = models.ForeignKey(cars, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(users, on_delete=models.CASCADE)
+    car_id = models.ForeignKey(cars, on_delete=models.CASCADE)
     from_date = models.DateField()
     to_date = models.DateField()
     created = models.DateTimeField(auto_now_add=True)
@@ -35,7 +35,7 @@ class rentals(models.Model):
         return f"Auto kikolcsonozve {self.users.username} altal a kovetkezo gepjarmu: - {self.cars.brand} {self.cars.model} ettol:  {self.from_date} eddig:  {self.to_date}"
     
 class sales(models.Model):
-    car = models.ForeignKey(cars, on_delete=models.CASCADE)
+    car_id = models.ForeignKey(cars, on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
     percent = models.IntegerField()
 
