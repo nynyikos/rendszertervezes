@@ -1,0 +1,42 @@
+<!-- autorent/templates/autorent/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Viewer</title>
+</head>
+<body>
+    <h1>Autó foglaló</h1>
+    <form method="get" action="{% url 'data_view' %}">
+        <select name="data_type">
+            <option value="users">Users</option>
+            <option value="cars">Cars</option>
+            <option value="rentals">Rentals</option>
+            <option value="sales">Sales</option>
+        </select>
+        <button type="submit">Load Data</button>
+    </form>
+
+    {% if data %}
+    <table>
+        <thead>
+            <tr>
+                {% for field in data.0.keys %}
+                <th>{{ field }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                {% for value in item.values %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</body>
+</html>

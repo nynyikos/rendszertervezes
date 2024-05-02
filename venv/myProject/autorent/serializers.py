@@ -11,7 +11,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = category
         fields = '__all__'
 
-
+class CarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = car
+        fields = '__all__'
 
 class RentalSerializer(serializers.ModelSerializer):
     class Meta:
