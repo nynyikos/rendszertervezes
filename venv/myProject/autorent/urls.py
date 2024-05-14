@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views import login_view
+from .views import login_view, register
 from .views import browse_cars
 
 router = DefaultRouter()
@@ -18,4 +18,5 @@ urlpatterns = [
     path('api/', include(router.urls)),  # API végpontok
     path('login/', login_view, name='login'), # Belépési oldal
     path('browse/', browse_cars, name='browse_cars'), # regisztráció nélkül nézelődő oldal
+    path('register/', register, name='register'),
 ]

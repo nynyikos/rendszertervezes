@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import car
+from django.contrib.auth.models import User
 
 # Create your views here.
 #-----API------
@@ -65,18 +66,37 @@ def item(request):
     return HttpResponse('<h1>There will be a car here</h1>')
 
 def login_view(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and 'username' in request.POST and 'password' in request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('data_view')  # Átirányítás a felhasználói oldalra
+            return redirect('data_view')
         else:
-            # Átirányítás a hiba oldalra, ha hibás a felhasználónév vagy jelszó
-            return render(request, 'autorent/invalid_login.html')
+            return HttpResponse('Hibás felhasználónév vagy jelszó', status=401)
+
     return render(request, 'autorent/login.html')
 
 def browse_cars(request):
     cars = car.objects.all()
     return render(request, 'autorent/browse_cars.html', {'cars': cars})
+
+def register(request):
+    if request.method == 'POST' and 'password2' in request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+
+        if password == password2:
+            if User.objects.filter(username=username).exists():
+                return HttpResponse("A felhasználónév már foglalt.", status=400)
+            else:
+                user = User.objects.create_user(username=username, password=password)
+                user.save()
+                login(request, user)
+                return redirect('data_view')
+        else:
+            return HttpResponse("A jelszavak nem egyeznek.", status=400)
+    
+    return render(request, 'autorent/login.html')
