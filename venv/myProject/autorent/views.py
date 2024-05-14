@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets
 from .models import user, category, car, rental, sale
 from .serializers import UserSerializer, CategorySerializer, CarSerializer, RentalSerializer, SaleSerializer
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 #-----API------
@@ -52,3 +53,15 @@ def data_view(request):
 def item(request):
     # Egy egyszerű válasz, ami jelzi, hogy lesz itt tartalom.
     return HttpResponse('<h1>There will be a car here</h1>')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')  # Átirányítás a főoldalra bejelentkezés után
+        else:
+            return HttpResponse('Hibás felhasználónév vagy jelszó')
+    return render(request, 'autorent/login.html')

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 from rest_framework.routers import DefaultRouter
+from .views import login_view
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -14,4 +15,5 @@ urlpatterns = [
     path('item/', views.item, name='item'), # Ez csak egy teszt oldal, első lépések között kreáltam, de benne hagyom a feladat végéig, ha esetleg későbbiekben át akarnám dolgozni
     path('user/', views.data_view, name='data_view'),  # user útvonal; 
     path('api/', include(router.urls)),  # API végpontok
+    path('login/', login_view, name='login'), # Belépési oldal
 ]
