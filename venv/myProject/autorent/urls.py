@@ -18,5 +18,5 @@ urlpatterns = [
     path('api/', include(router.urls)),  # API végpontok
     path('login/', login_view, name='login'), # Belépési oldal
     path('browse/', browse_cars, name='browse_cars'), # regisztráció nélkül nézelődő oldal
-    path('register/', register, name='register'),
+    path('register/', register, name='register'), #regisztrációs lehetőség
 ]
