@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.http import HttpResponse
 from rest_framework import viewsets
 from .models import user, category, car, rental, sale
 from .serializers import UserSerializer, CategorySerializer, CarSerializer, RentalSerializer, SaleSerializer
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from .models import car
 
 # Create your views here.
 #-----API------
@@ -33,6 +36,7 @@ def index(request):
     # Egyszerű kezdőlap, ami üdvözli a felhasználót.
     return HttpResponse('Üdv az autófoglalás oldalán! A későbbiekben itt tudsz majd bejelentkezni.')
 
+@login_required
 def data_view(request):
     # Lekéri a 'data_type' paramétert a kérésből, alapértelmezett érték 'users'
     data_type = request.GET.get('data_type', 'users')
@@ -47,8 +51,14 @@ def data_view(request):
     
     data = list(data_sources.get(data_type, user.objects.none()).values())
     
-    # index.html sablon renderelése
-    return render(request, 'autorent/index.html', {'data': data})
+    # Ellenőrizd, hogy van-e bejelentkezett felhasználó
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = "NoUserLogin"
+    
+    # index.html sablon renderelése a felhasználónévvel
+    return render(request, 'autorent/index.html', {'data': data, 'username': username})
 
 def item(request):
     # Egy egyszerű válasz, ami jelzi, hogy lesz itt tartalom.
@@ -61,7 +71,12 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('index')  # Átirányítás a főoldalra bejelentkezés után
+            return redirect('data_view')  # Átirányítás a felhasználói oldalra
         else:
-            return HttpResponse('Hibás felhasználónév vagy jelszó')
+            # Átirányítás a hiba oldalra, ha hibás a felhasználónév vagy jelszó
+            return render(request, 'autorent/invalid_login.html')
     return render(request, 'autorent/login.html')
+
+def browse_cars(request):
+    cars = car.objects.all()
+    return render(request, 'autorent/browse_cars.html', {'cars': cars})
