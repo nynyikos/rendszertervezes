@@ -20,5 +20,5 @@ from django.urls import include,path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('autorent/',include('autorent.urls')),
+    path('autorent/',include('autorent.urls')), #--> beolvasom az /autorent url-t is ezzel
 ]

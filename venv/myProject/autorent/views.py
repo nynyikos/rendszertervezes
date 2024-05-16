@@ -9,6 +9,7 @@ from django.urls import reverse
 from .models import car
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 #-----API------
@@ -37,10 +38,9 @@ class SaleViewSet(viewsets.ModelViewSet):
 
 @login_required
 def data_view(request):
-    # Lekéri a 'data_type' paramétert a kérésből, alapértelmezett érték 'users'
+    #--> tábla lekérés, alapérték a user
     data_type = request.GET.get('data_type', 'users')
-    
-    # Dinamikusan kiválasztás kérés alapján
+    #--> dinamikus tábla lekérés az alapján amit választok
     data_sources = {
         'users': user.objects.all(),
         'cars': car.objects.all(),
@@ -49,35 +49,32 @@ def data_view(request):
     }
     
     data = list(data_sources.get(data_type, user.objects.none()).values())
-    
-    # Ellenőrizd, hogy van-e bejelentkezett felhasználó
+
     if request.user.is_authenticated:
         username = request.user.username
     else:
         username = "NoUserLogin"
-    
-    # index.html sablon renderelése a felhasználónévvel
     return render(request, 'autorent/index.html', {'data': data, 'username': username})
 
 
-def login_view(request):
+def login_view(request): #--> bejelentkezési oldal
     if request.method == 'POST' and 'username' in request.POST and 'password' in request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('index')  # Átirányítás az index nézetre, ami kezeli az autók listázását és foglalását
+            return redirect('index')  
         else:
             return HttpResponse('Hibás felhasználónév vagy jelszó', status=401)
         
     return render(request, 'autorent/login.html')
 
-def browse_cars(request):
+def browse_cars(request): #--> alap reg nélküli oldal, csak kocsinézés
     cars = car.objects.all()
     return render(request, 'autorent/browse_cars.html', {'cars': cars})
 
-def register(request):
+def register(request): #--> regisztrálás + belépés
     if request.method == 'POST' and 'password2' in request.POST:
         username = request.POST['username']
         password = request.POST['password']
@@ -87,15 +84,13 @@ def register(request):
             if User.objects.filter(username=username).exists():
                 return HttpResponse("A felhasználónév már foglalt.", status=400)
             else:
-                # Létrehoz egy beépített User példányt
                 django_user = User.objects.create_user(username=username, password=password)
                 django_user.save()
 
-                # Létrehoz egy saját user példányt
-                my_user = user(username=username, name=username)  # feltételezve, hogy van egy 'name' meződ
+                my_user = user(username=username, name=username)  
                 my_user.save()
 
-                login(request, django_user)  # Bejelentkeztetjük a felhasználót
+                login(request, django_user) 
                 return redirect('data_view')
         else:
             return HttpResponse("A jelszavak nem egyeznek.", status=400)
@@ -105,13 +100,11 @@ def register(request):
 
 
 
-def redirect_to_login(request):
+def redirect_to_login(request):#--> vissza login oldalra redirect
     return redirect('/autorent/login/')
 
-def user_table(request):
-    return render(request, 'autorent/table.html') 
 
-@login_required
+@login_required #-->kocsifoglalás hozzáadás
 def create_rental(request):
     if request.method == 'POST':
         car_id = request.POST.get('car')
@@ -119,7 +112,7 @@ def create_rental(request):
         to_date = request.POST.get('to_date')
 
         car = car.objects.get(id=car_id)
-        user = request.user  # A bejelentkezett felhasználó
+        user = request.user  
 
         new_rental = rental(user=user, car=car, from_date=from_date, to_date=to_date)
         new_rental.save()
@@ -135,7 +128,7 @@ def index(request):
     username = request.user.username if request.user.is_authenticated else "NoUserLogin"
     return render(request, 'autorent/index.html', {'available_cars': available_cars, 'username': username})
 
-@login_required
+@login_required #---> foglalás
 def create_rental(request):
     if request.method == 'POST':
         car_id = request.POST.get('car')
@@ -151,8 +144,7 @@ def create_rental(request):
 
             new_rental = rental(user=user_instance, car=selected_car, from_date=from_date, to_date=to_date)
             new_rental.save()
-            
-            # HTML válasz a sikeres foglalásról és egy visszalépési linkről
+            # Válasz + visszagomb
             return HttpResponse(f'''
                 <html>
                 <head><title>Foglalás Sikeres</title></head>

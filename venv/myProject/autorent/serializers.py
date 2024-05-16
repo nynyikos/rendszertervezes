@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import user, category, car, rental, sale
 
+#-->adatb írás-olvasás; JSON -> DJANGO -- DJANGO -> JSON 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
