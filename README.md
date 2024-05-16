@@ -10,5 +10,6 @@ Admin felület
 http://127.0.0.1:8000/admin --> user/pw (admin/Autorent1!)
 
 User felület:
-http://127.0.0.1:8000/autorent/ ---> főoldal, innen még nem lehet kattintással továbblépni
-http://127.0.0.1:8000/autorent/user --> adatlekérés sqlite adatbázisból, nagyon egyszerű felület
+http://127.0.0.1:8000/autorent/ ---> átirányítva a bejelentkező oldalra.
+http://127.0.0.1:8000/autorent/login ---> itt lehet bejelentkezni, regisztrálni az adatbázisba, vagy szimplán nézőként megnézni a kikölcsönözhető autókat
+http://127.0.0.1:8000/autorent/user --> regisztráció után elérhető felület, félig megvalósított autófoglalás, naptári nézet nincs, adattábla lekérés nem teljesen működik
