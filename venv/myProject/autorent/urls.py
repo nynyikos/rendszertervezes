@@ -14,8 +14,8 @@ router.register(r'sales', views.SaleViewSet)
 
 # URL minták definiálása
 urlpatterns = [
-    path('', login_view, name='login'),  # Az alapértelmezett útvonal közvetlenül a bejelentkezési oldalra visz
-    # path('', index, name='index'),  # Most ez lesz a kezdőoldal
+    path('', login_view, name='login'),  # Az alapértelmezett útvonal a bejelentkezési oldalra visz
+    path('index/', views.index, name='index'),  # Az index oldal, ahol az autók listázása és foglalása történik
     path('user/', views.data_view, name='data_view'),  # Csak bejelentkezett felhasználók érik el; adatok megjelenítése
     path('api/', include(router.urls)),  # API végpontok
     path('browse/', browse_cars, name='browse_cars'),  # Regisztráció nélküli nézelődő oldal
