@@ -8,6 +8,7 @@
 <body>
     <h1>Autó foglaló</h1>
     <p>WhoAmI: {{ username }}</p>  <!-- Kiírjuk a felhasználó nevét vagy a NoUserLogin szöveget -->
+
     <form method="get" action="{% url 'data_view' %}">
         <select name="data_type">
             <option value="users">Users</option>
@@ -38,5 +39,26 @@
         </tbody>
     </table>
     {% endif %}
+
+    <!-- Autófoglalás űrlap -->
+    <h2>Foglalás létrehozása</h2>
+    <form method="post" action="{% url 'create_rental' %}">
+        {% csrf_token %}
+        <label for="car">Válassz autót:</label>
+        <select id="car" name="car">
+            {% for car in available_cars %}
+            <option value="{{ car.id }}">{{ car.brand }} - {{ car.model }} (Napi ár: {{ car.daily_price }})</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="from_date">Kezdő dátum:</label>
+        <input type="date" id="from_date" name="from_date" required><br><br>
+
+        <label for="to_date">Befejező dátum:</label>
+        <input type="date" id="to_date" name="to_date" required><br><br>
+
+        <button type="submit">Foglalás</button>
+    </form>
+
 </body>
 </html>

@@ -34,8 +34,10 @@ class SaleViewSet(viewsets.ModelViewSet):
 #-----API------
 #--------------
 def index(request):
-    # Egyszerű kezdőlap, ami üdvözli a felhasználót.
+    # Egyszerű kezdőlap, ami üdvözli a felhasználót. ---- ez azóta módosítva lett, már nem él.
     return HttpResponse('Üdv az autófoglalás oldalán! A későbbiekben itt tudsz majd bejelentkezni.')
+
+
 
 @login_required
 def data_view(request):
@@ -61,9 +63,6 @@ def data_view(request):
     # index.html sablon renderelése a felhasználónévvel
     return render(request, 'autorent/index.html', {'data': data, 'username': username})
 
-def item(request):
-    # Egy egyszerű válasz, ami jelzi, hogy lesz itt tartalom.
-    return HttpResponse('<h1>There will be a car here</h1>')
 
 def login_view(request):
     if request.method == 'POST' and 'username' in request.POST and 'password' in request.POST:
@@ -105,3 +104,30 @@ def register(request):
 
 def redirect_to_login(request):
     return redirect('/autorent/login/')
+
+def user_table(request):
+    return render(request, 'autorent/table.html') 
+
+@login_required
+def create_rental(request):
+    if request.method == 'POST':
+        car_id = request.POST.get('car')
+        from_date = request.POST.get('from_date')
+        to_date = request.POST.get('to_date')
+
+        car = car.objects.get(id=car_id)
+        user = request.user  # A bejelentkezett felhasználó
+
+        new_rental = rental(user=user, car=car, from_date=from_date, to_date=to_date)
+        new_rental.save()
+
+        return HttpResponse('Foglalás sikeres!')
+    else:
+        available_cars = car.objects.all()
+        return render(request, 'autorent/index.html', {'available_cars': available_cars})
+
+@login_required
+def index(request):
+    available_cars = car.objects.all()
+    username = request.user.username if request.user.is_authenticated else "NoUserLogin"
+    return render(request, 'autorent/index.html', {'available_cars': available_cars, 'username': username})
