@@ -3,6 +3,7 @@ from . import views
 from rest_framework.routers import DefaultRouter
 from .views import login_view, register
 from .views import browse_cars
+from .views import redirect_to_login
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -12,7 +13,7 @@ router.register(r'rentals', views.RentalViewSet)
 router.register(r'sales', views.SaleViewSet)
 
 urlpatterns = [
-    path('', views.index, name='index'),  # Ez a kezdőoldal
+    path('', redirect_to_login, name='autorent-home'),  # Ez a kezdőoldal
     path('item/', views.item, name='item'), # Ez csak egy teszt oldal, első lépések között kreáltam, de benne hagyom a feladat végéig, ha esetleg későbbiekben át akarnám dolgozni
     path('user/', views.data_view, name='data_view'),  # user útvonal; 
     path('api/', include(router.urls)),  # API végpontok

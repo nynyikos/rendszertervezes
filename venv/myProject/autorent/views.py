@@ -100,3 +100,8 @@ def register(request):
             return HttpResponse("A jelszavak nem egyeznek.", status=400)
     
     return render(request, 'autorent/login.html')
+
+
+
+def redirect_to_login(request):
+    return redirect('/autorent/login/')
